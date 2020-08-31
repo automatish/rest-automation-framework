@@ -1,7 +1,12 @@
+//The test can be enabled by setting enabled=true
+
 package Test;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -35,11 +40,35 @@ public class TestNgTest {
 		
 		extentReports=new ExtentReports(userDir+".html");
 	}
-  @Test
-  public void s() throws IOException {
+	@Test(enabled=false)
+	public void putMethod() throws IOException
+	{
+		String fileLocation=System.getProperty("user.dir")+"\\src\\test\\resources\\Request.txt";
+		String body=localObject.requestCreation(fileLocation);
+		response=RestAssured.given().headers("Content-type", "application/json").body(body).put("http://thetestingworldapi.com/api/studentsDetails/68068");
+		  System.out.println(response.prettyPrint());
+		  
+	}
+
+	@Test(enabled=false)
+	public void postMethod() throws IOException {
+		String fileLocation=System.getProperty("user.dir")+"\\src\\test\\resources\\Request.txt";
+		String body=localObject.requestCreation(fileLocation);
+		response=RestAssured.given().headers("Content-type", "application/json").body(body).post("http://thetestingworldapi.com/api/studentsDetails");
+		System.out.println(response.prettyPrint());
+	}
+	@Test(enabled=false)
+	public void deleteMethod()
+	{
+		response=RestAssured.given().delete("http://thetestingworldapi.com/api/studentsDetails/68068");
+		System.out.println(response.prettyPrint());
+	}
+	
+  @Test(enabled=false)
+  public void getMethod() throws IOException {
 	  test=extentReports.startTest("TC01");
 	  //Calling the GET API
-	  response=RestAssured.get("http://jsonplaceholder.typicode.com/users");
+	  response=RestAssured.get("http://thetestingworldapi.com/api/studentsDetails/68068");
 	  
 	  //Log the response in report file
 	  test.log(LogStatus.INFO,"RESPONSE");
@@ -68,5 +97,18 @@ public class TestNgTest {
 	  fileWriter.flush();
 	  fileWriter.close();
   }
+	public String requestCreation(String fileLocation) throws IOException
+	{
+		String sampleRequest="";
+		FileReader fr=new FileReader(fileLocation);
+		BufferedReader br=new BufferedReader(fr);
+		String currentLine=br.readLine();
+		while(currentLine!=null) {
+			sampleRequest+=currentLine+System.lineSeparator();
+			currentLine=br.readLine();
+		}
+		return sampleRequest;
+	}
+
 }
  
